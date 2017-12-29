@@ -35,7 +35,7 @@ flat_ordered_weightings = flat_container.scatter(
     flat_unordered_allocation_weighting
 )
 
-packed_wightings = flat_ordered_weightings.pack()
+packed_wightings = flat_ordered_weightings.stack()
 return tf.reshape(packed_wightings, (self.batch_size, self.words_num))
 ```
 

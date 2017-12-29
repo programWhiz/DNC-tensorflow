@@ -136,7 +136,7 @@ with graph.as_default():
             task_result = "%.2f%%" % (tasks_results[task_id] * 100)
             print "%-27s%-27s%s" % (tasks_names[task_id], task_result, paper_means[task_id])
         print "-------------------------------------------------------------------"
-        all_tasks_results = [v for _,v in tasks_results.iteritems()]
+        all_tasks_results = [v for _,v in tasks_results.items()]
         results_mean = "%.2f%%" % (np.mean(all_tasks_results) * 100)
         failed_count = "%d" % (np.sum(np.array(all_tasks_results) > 0.05))
         
