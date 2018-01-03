@@ -8,7 +8,7 @@ import sys
 import os
 
 from dnc.dnc import DNC
-from feedforward_controller import FeedforwardController
+from .feedforward_controller import FeedforwardController
 
 def llprint(message):
     sys.stdout.write(message)
@@ -93,22 +93,22 @@ if __name__ == '__main__':
             gradients = optimizer.compute_gradients(loss)
             for i, (grad, var) in enumerate(gradients):
                 if grad is not None:
-                    summeries.append(tf.histogram_summary(var.name + '/grad', grad))
+                    summeries.append(tf.summary.histogram(var.name + '/grad', grad))
                     gradients[i] = (tf.clip_by_value(grad, -10, 10), var)
 
             apply_gradients = optimizer.apply_gradients(gradients)
 
-            summeries.append(tf.scalar_summary("Loss", loss))
+            summeries.append(tf.summary.scalar("Loss", loss))
 
-            summerize_op = tf.merge_summary(summeries)
+            summerize_op = tf.summary.merge(summeries)
             no_summerize = tf.no_op()
 
-            summerizer = tf.train.SummaryWriter(tb_logs_dir, session.graph)
+            summerizer = tf.summary.FileWriter(tb_logs_dir, session.graph)
 
             llprint("Done!\n")
 
             llprint("Initializing Variables ... ")
-            session.run(tf.initialize_all_variables())
+            session.run(tf.global_variables_initializer())
             llprint("Done!\n")
 
             if from_checkpoint is not None:
@@ -119,7 +119,7 @@ if __name__ == '__main__':
 
             last_100_losses = []
 
-            for i in xrange(iterations + 1):
+            for i in range(iterations + 1):
                 llprint("\rIteration %d/%d" % (i, iterations))
 
                 random_length = np.random.randint(1, sequence_max_length + 1)
@@ -139,7 +139,8 @@ if __name__ == '__main__':
                 })
 
                 last_100_losses.append(loss_value)
-                summerizer.add_summary(summary, i)
+                if summary:
+                    summerizer.add_summary(summary, i)
 
                 if summerize:
                     llprint("\n\tAvg. Logistic Loss: %.4f\n" % (np.mean(last_100_losses)))

@@ -1,6 +1,6 @@
 import tensorflow as tf
 from tensorflow.python.ops.rnn_cell import LSTMStateTuple
-from memory import Memory
+from .memory import Memory
 from . import utility
 import os
 
